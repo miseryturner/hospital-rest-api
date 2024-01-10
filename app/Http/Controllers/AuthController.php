@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    public function store(Request $request)
+    public function regiter(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'last_name'  => 'required|max:50',
@@ -24,7 +24,7 @@ class AuthController extends Controller
         ]);
 
         if($validator->fails()) {
-            $data = [
+            $responseData = [
                 'error' => [
                     'code' => 422,
                     'message' => 'Validation error',
@@ -32,7 +32,7 @@ class AuthController extends Controller
                 ]
             ];
 
-            return response()->json($data, 422);
+            return response()->json($responseData, 422);
         }
 
         $token = User::generateToken();
@@ -50,5 +50,50 @@ class AuthController extends Controller
         ]);
 
         return response()->json(['token' => $new_user->token], 200);
+    }
+
+    public function login(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'mobile'    => 'required|min:12|max:12',
+            'password'  => 'required|min:6'
+        ]);
+
+        if($validator->fails()) {
+            $responseData = [
+                'error' => [
+                    'code' => 422,
+                    'message' => 'Validation error',
+                    'errors' => $validator->messages()
+                ]
+            ];
+
+            return response()->json($responseData, 422);
+        }
+
+        $user = User::where('mobile', $request->mobile)->first();
+
+        if($user) {
+            if(Hash::check($request->password, $user->password)) {
+                return response()->json(['token' => $user->token]);
+            } else {
+                $responseData = [
+                    'error' => [
+                        'code' => 401,
+                        'message' => 'Incorrect password'
+                    ]
+                ];
+    
+                return response()->json($responseData, 401);
+            }
+        } else { 
+            $responseData = [
+                'error' => [
+                    'code' => 401,
+                    'message' => 'User with this phone number not found'
+                ]
+            ];
+
+            return response()->json($responseData, 401);
+        } 
     }
 }
