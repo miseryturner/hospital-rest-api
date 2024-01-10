@@ -35,4 +35,36 @@ class RecordController extends Controller
 
         return response()->json($record);
     }
+
+    public function show($id) {
+        $record = Record::with(['user', 'doctor'])->where('id', $id)->first();
+        if($record) {
+            $responseData = [
+                'error' => [
+                    'code' => 404,
+                    'message' => 'Record not found'
+                ]
+            ];
+
+            return response()->json($responseData, 422);
+        }
+
+        return response()->json($record);
+    }
+
+    public function getRecordByDoctor($id) {
+        $record = Record::with(['user', 'doctor'])->where('doctor_id', $id)->get();
+        if($record->isEmpty()) {
+            $responseData = [
+                'error' => [
+                    'code' => 404,
+                    'message' => 'Records not found'
+                ]
+            ];
+
+            return response()->json($responseData, 422);
+        }
+
+        return response()->json($record);
+    }
 }
