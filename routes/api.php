@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\AuthController;
+use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\RecordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,3 +20,8 @@ use \App\Http\Controllers\AuthController;
 Route::post('/register', [AuthController::class, 'regiter']);
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::get('/doctor', [DoctorController::class, 'index']);
+Route::get('/search', [DoctorController::class, 'search']);
+
+Route::post('/record', [RecordController::class, 'record'])->middleware('user_token');
+Route::get('/record/{record}', [RecordController::class, 'index'])->middleware('user_token');
