@@ -13,14 +13,14 @@ class AuthController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'last_name' => 'required|max:50',
+            'last_name'  => 'required|max:50',
             'patronymic' => 'required|max:50',
-            'mobile' => 'required|min:12|max:12',
-            'password' => 'required|min:6',
-            'policy' => 'required|min:16',
-            'birthday' => 'required|date',
-            'gender' => 'required|max:1',
-            'address' => 'required|max:255'
+            'mobile'     => 'required|unique:users,mobile|min:12|max:12',
+            'password'   => 'required|min:6',
+            'policy'     => 'required|unique:users,policy|min:16',
+            'birthday'   => 'required|date',
+            'gender'     => 'required|max:1',
+            'address'    => 'required|max:255'
         ]);
 
         if($validator->fails()) {
@@ -35,17 +35,20 @@ class AuthController extends Controller
             return response()->json($data, 422);
         }
 
+        $token = User::generateToken();
+
         $new_user = User::create([
-            'last_name' => $request->last_name,
+            'last_name'  => $request->last_name,
             'patronymic' => $request->patronymic,
-            'mobile' => $request->mobile,
-            'password' => Hash::make($request->password),
-            'policy' => $request->policy,
-            'birthday' => $request->birthday,
-            'gender' => $request->gender,
-            'address' => $request->address,
+            'mobile'     => $request->mobile,
+            'password'   => Hash::make($request->password),
+            'policy'     => $request->policy,
+            'birthday'   => $request->birthday,
+            'gender'     => $request->gender,
+            'address'    => $request->address,
+            'token'      => $token
         ]);
 
-        return response()->json(['data' => $new_user], 200);
+        return response()->json(['token' => $new_user->token], 200);
     }
 }
