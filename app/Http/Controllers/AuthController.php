@@ -10,8 +10,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    public function regiter(Request $request)
-    {
+    public function regiter(Request $request) {
         $validator = Validator::make($request->all(), [
             'last_name'  => 'required|max:50',
             'patronymic' => 'required|max:50',
@@ -95,5 +94,10 @@ class AuthController extends Controller
 
             return response()->json($responseData, 401);
         } 
+    }
+
+    public function patient(Request $request) {
+        $user = User::where('id', $request->get('user_id'))->first();
+        return response()->json($user);
     }
 }

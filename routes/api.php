@@ -19,6 +19,7 @@ use App\Http\Controllers\RecordController;
 
 Route::post('/register', [AuthController::class, 'regiter']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/patient', [AuthController::class, 'patient'])->middleware('user_token');
 
 Route::get('/doctor', [DoctorController::class, 'index']);
 Route::get('/search', [DoctorController::class, 'search']);
