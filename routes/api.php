@@ -27,6 +27,4 @@ Route::get('/search', [DoctorController::class, 'search']);
 Route::post('/record', [RecordController::class, 'record'])->middleware('user_token');
 Route::get('/record/{record}', [RecordController::class, 'show'])->middleware('user_token');
 Route::get('/record/doctor/{doctor}/', [RecordController::class, 'getRecordByDoctor'])->middleware('user_token');
-
-//Получение своих посещений
-//Выход из личного кабинета
+Route::get('/record/user/{user}', [RecordController::class, 'getRecordByUserId'])->middleware('user_token');
